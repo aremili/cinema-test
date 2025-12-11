@@ -10,4 +10,5 @@ dependencies = [
     "psycopg[binary]>=3.2",
     "python-decouple>=3.8",
     "dj-database-url>=2.3",
+    "pillow>=11.0",
 ]
