@@ -125,3 +125,36 @@ class TestMovieRating:
         assert response.data["score"] == 9
         assert response.data["review"] == "Even better when rewatch!"
         assert MovieRating.objects.filter(spectator=spectator, movie=movie).count() == 1
+
+
+class TestMovieFavorite:
+    """Tests favorite movies"""
+
+    def test_add_movie_to_favorites(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
+        url = reverse("movie-favorite", kwargs={"pk": movie.pk})
+        response = api_client.post(url)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert spectator.favorite_movies.filter(pk=movie.pk).exists()
+
+    def test_remove_movie_from_favorites(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
+        spectator.favorite_movies.add(movie)
+
+        url = reverse("movie-favorite", kwargs={"pk": movie.pk})
+        response = api_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not spectator.favorite_movies.filter(pk=movie.pk).exists()
+
+    def test_list_my_favorites(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
+        spectator.favorite_movies.add(movie)
+
+        url = reverse("movie-my-favorites")
+        response = api_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 1
+        assert response.data[0]["id"] == movie.pk

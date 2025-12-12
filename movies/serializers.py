@@ -54,3 +54,11 @@ class AuthorRatingSerializer(serializers.ModelSerializer):
         model = AuthorRating
         fields = ["id", "score", "review", "created_at", "updated_at"]
         read_only_fields = ["id", "created_at", "updated_at"]
+
+
+class MovieNestedSerializer(serializers.ModelSerializer):
+    """Nested serializer for movies in favorites"""
+
+    class Meta:
+        model = Movie
+        fields = ["id", "title", "release_date", "status"]
