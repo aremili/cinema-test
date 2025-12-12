@@ -1,49 +1,14 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
 
-from movies.models import Author, Movie
-
-
-@pytest.fixture
-def api_client():
-    return APIClient()
-
-
-@pytest.fixture
-def author(db):
-    """Test author without movies."""
-    return Author.objects.create_user(
-        username="test_author",
-        email="author@test.com",
-        password="testpass123",
-        biography="Test biography",
-        nationality="French",
-    )
-
-
-@pytest.fixture
-def author_with_movie(db):
-    """Test author with a linked movie."""
-    author = Author.objects.create_user(
-        username="author_with_movie",
-        email="author2@test.com",
-        password="testpass123",
-        biography="Another biography",
-    )
-    movie = Movie.objects.create(
-        title="Test Movie",
-        overview="A test movie",
-    )
-    movie.authors.add(author)
-    return author
+from movies.models import Author
 
 
 class TestAuthorList:
-    """Tests for list of authors /api/authors/"""
+    """Tests for listing authors"""
 
-    def test_list_authors_returns_200(self, api_client, author):
+    def test_list_authors(self, api_client, author):
         url = reverse("author-list")
         response = api_client.get(url)
 
@@ -62,9 +27,9 @@ class TestAuthorList:
 
 
 class TestAuthorRetrieve:
-    """Tests for GET /api/authors/{id}/"""
+    """Tests for retrieving author"""
 
-    def test_retrieve_author_returns_200(self, api_client, author):
+    def test_retrieve_author(self, api_client, author):
         url = reverse("author-detail", kwargs={"pk": author.pk})
         response = api_client.get(url)
 
@@ -72,7 +37,7 @@ class TestAuthorRetrieve:
         assert response.data["biography"] == "Test biography"
         assert response.data["nationality"] == "French"
 
-    def test_retrieve_nonexistent_author_returns_404(self, api_client, db):
+    def test_retrieve_nonexistent_author(self, api_client, db):
         url = reverse("author-detail", kwargs={"pk": 99999})
         response = api_client.get(url)
 
@@ -80,7 +45,7 @@ class TestAuthorRetrieve:
 
 
 class TestAuthorUpdate:
-    """Tests for PUT/PATCH /api/authors/{id}/"""
+    """Tests for updating author"""
 
     def test_partial_update_author(self, api_client, author):
         url = reverse("author-detail", kwargs={"pk": author.pk})
@@ -113,7 +78,7 @@ class TestAuthorUpdate:
 
 
 class TestAuthorDelete:
-    """Tests for DELETE /api/authors/{id}/"""
+    """Tests for deleting author"""
 
     def test_delete_author_without_movies_linked(self, api_client, author):
         url = reverse("author-detail", kwargs={"pk": author.pk})
