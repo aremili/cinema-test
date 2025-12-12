@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Author, Movie, MovieRating
+from .models import Author, AuthorRating, Movie, MovieRating
 
 
 class AuthorNestedSerializer(serializers.ModelSerializer):
@@ -43,5 +43,14 @@ class MovieRatingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MovieRating
+        fields = ["id", "score", "review", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+
+class AuthorRatingSerializer(serializers.ModelSerializer):
+    """Rating authors serializer"""
+
+    class Meta:
+        model = AuthorRating
         fields = ["id", "score", "review", "created_at", "updated_at"]
         read_only_fields = ["id", "created_at", "updated_at"]

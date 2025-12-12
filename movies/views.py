@@ -4,15 +4,20 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Author, Movie, MovieRating, Spectator
-from .serializers import AuthorSerializer, MovieRatingSerializer, MovieSerializer
+from .models import Author, AuthorRating, Movie, MovieRating, Spectator
+from .serializers import (
+    AuthorRatingSerializer,
+    AuthorSerializer,
+    MovieRatingSerializer,
+    MovieSerializer,
+)
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
     """
     API to manage authors.
     """
-    http_method_names = ["get", "put", "patch", "delete"]
+    http_method_names = ["get", "put", "patch", "delete", "post"]
 
     queryset = Author.objects.prefetch_related("movies").all()
     serializer_class = AuthorSerializer
@@ -24,6 +29,41 @@ class AuthorViewSet(viewsets.ModelViewSet):
                 {"detail": "Cannot delete author with linked movies."}
             )
         instance.delete()
+
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=[IsAuthenticated],
+        serializer_class=AuthorRatingSerializer,
+    )
+    def rate(self, request, pk=None):
+        author = self.get_object()
+
+        try:
+            spectator = Spectator.objects.get(pk=request.user.pk)
+        except Spectator.DoesNotExist:
+            return Response(
+                {"detail": "Only spectators can rate authors."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        rating, created = AuthorRating.objects.update_or_create(
+            spectator=spectator,
+            author=author,
+            defaults={
+                "score": serializer.validated_data["score"],
+                "review": serializer.validated_data.get("review", ""),
+            },
+        )
+
+        response_serializer = AuthorRatingSerializer(rating)
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
 
 
 class MovieViewSet(viewsets.ModelViewSet):

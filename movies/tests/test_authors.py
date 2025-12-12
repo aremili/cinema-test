@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from movies.models import Author
+from movies.models import Author, AuthorRating
 
 
 class TestAuthorList:
@@ -94,3 +94,27 @@ class TestAuthorDelete:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Cannot delete author with linked movies" in str(response.data)
         assert Author.objects.filter(pk=author_with_movie.pk).exists()
+
+
+class TestAuthorRating:
+
+    def test_create_and_update_author_rating(self, api_client, author, spectator):
+        api_client.force_authenticate(user=spectator)
+        url = reverse("author-rate", kwargs={"pk": author.pk})
+
+        api_client.post(
+            url,
+            {"score": 7, "review": "Good director"},
+            format="json",
+        )
+
+        response = api_client.post(
+            url,
+            {"score": 10, "review": "a masterpiece maker!"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["score"] == 10
+        assert response.data["review"] == "a masterpiece maker!"
+        assert AuthorRating.objects.filter(spectator=spectator, author=author).count() == 1
