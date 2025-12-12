@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     environment:
-      - DEBUG=False
+      - DEBUG=True
       - DATABASE_URL=postgres://cinema:cinema@db:5432/cinema
     volumes:
       - .:/app
