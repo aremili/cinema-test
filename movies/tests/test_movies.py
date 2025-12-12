@@ -68,7 +68,8 @@ class TestMovieRetrieve:
 
 class TestMovieUpdate:
 
-    def test_partial_update_movie(self, api_client, movie):
+    def test_partial_update_movie(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
         url = reverse("movie-detail", kwargs={"pk": movie.pk})
         response = api_client.patch(
             url,
@@ -81,7 +82,8 @@ class TestMovieUpdate:
         movie.refresh_from_db()
         assert movie.title == "Updated Title"
 
-    def test_full_update_movie(self, api_client, movie):
+    def test_full_update_movie(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
         url = reverse("movie-detail", kwargs={"pk": movie.pk})
         response = api_client.put(
             url,

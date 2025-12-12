@@ -55,7 +55,8 @@ class TestAuthorRetrieve:
 class TestAuthorUpdate:
     """Tests for updating author"""
 
-    def test_partial_update_author(self, api_client, author):
+    def test_partial_update_author(self, api_client, author, spectator):
+        api_client.force_authenticate(user=spectator)
         url = reverse("author-detail", kwargs={"pk": author.pk})
         response = api_client.patch(
             url,
@@ -68,7 +69,8 @@ class TestAuthorUpdate:
         author.refresh_from_db()
         assert author.nationality == "Italian"
 
-    def test_full_update_author(self, api_client, author):
+    def test_full_update_author(self, api_client, author, spectator):
+        api_client.force_authenticate(user=spectator)
         url = reverse("author-detail", kwargs={"pk": author.pk})
         response = api_client.put(
             url,
@@ -88,14 +90,16 @@ class TestAuthorUpdate:
 class TestAuthorDelete:
     """Tests for deleting author"""
 
-    def test_delete_author_without_movies_linked(self, api_client, author):
+    def test_delete_author_without_movies_linked(self, api_client, author, spectator):
+        api_client.force_authenticate(user=spectator)
         url = reverse("author-detail", kwargs={"pk": author.pk})
         response = api_client.delete(url)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Author.objects.filter(pk=author.pk).exists()
 
-    def test_delete_author_with_movies_linked(self, api_client, author_with_movie):
+    def test_delete_author_with_movies_linked(self, api_client, author_with_movie, spectator):
+        api_client.force_authenticate(user=spectator)
         url = reverse("author-detail", kwargs={"pk": author_with_movie.pk})
         response = api_client.delete(url)
 

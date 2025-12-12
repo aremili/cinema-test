@@ -1,7 +1,7 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .models import Author, AuthorRating, Movie, MovieRating, Spectator
@@ -21,7 +21,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "put", "patch", "delete", "post"]
 
     serializer_class = AuthorSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         queryset = Author.objects.prefetch_related("movies").all()
@@ -79,7 +79,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     """
     http_method_names = ["get", "put", "patch", "post", "delete"]
     serializer_class = MovieSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         queryset = Movie.objects.all()
