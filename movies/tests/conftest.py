@@ -10,6 +10,19 @@ def api_client():
 
 
 @pytest.fixture
+def api_client_jwt(api_client, spectator):
+    """API client with JWT token."""
+    response = api_client.post(
+        "/api/auth/token/",
+        {"username": spectator.username, "password": "testpass123"},
+        format="json",
+    )
+    token = response.data["access"]
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+    return api_client
+
+
+@pytest.fixture
 def author(db):
     """Test author without movies."""
     return Author.objects.create_user(
@@ -68,3 +81,4 @@ def spectator(db):
         email="spectator@test.com",
         password="testpass123",
     )
+
