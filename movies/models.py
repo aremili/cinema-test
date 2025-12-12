@@ -22,6 +22,7 @@ class Author(BaseUser):
         max_length=10,
         choices=Source.choices,
         default=Source.ADMIN,
+        db_index=True,
     )
     tmdb_id = models.IntegerField(null=True, blank=True, unique=True)
 
@@ -73,11 +74,12 @@ class Movie(models.Model):
     title = models.CharField(max_length=255)
     overview = models.TextField(blank=True, default="")
     tagline = models.CharField(max_length=500, blank=True, default="")
-    release_date = models.DateField(blank=True, null=True)
+    release_date = models.DateField(blank=True, null=True, db_index=True)
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
         default=Status.RELEASED,
+        db_index=True,
     )
     evaluation = models.CharField(
         max_length=20,
@@ -96,6 +98,7 @@ class Movie(models.Model):
         max_length=10,
         choices=Source.choices,
         default=Source.ADMIN,
+        db_index=True,
     )
     tmdb_id = models.IntegerField(null=True, blank=True, unique=True)
 
