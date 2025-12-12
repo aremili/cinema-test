@@ -20,9 +20,15 @@ class AuthorViewSet(viewsets.ModelViewSet):
     """
     http_method_names = ["get", "put", "patch", "delete", "post"]
 
-    queryset = Author.objects.prefetch_related("movies").all()
     serializer_class = AuthorSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Author.objects.prefetch_related("movies").all()
+        source = self.request.query_params.get("source")
+        if source:
+            queryset = queryset.filter(source=source)
+        return queryset
 
     def perform_destroy(self, instance):
         if instance.movies.exists():
@@ -78,8 +84,11 @@ class MovieViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Movie.objects.all()
         movie_status = self.request.query_params.get("status")
+        source = self.request.query_params.get("source")
         if movie_status:
             queryset = queryset.filter(status=movie_status)
+        if source:
+            queryset = queryset.filter(source=source)
         return queryset
 
     def destroy(self, request, *args, **kwargs):

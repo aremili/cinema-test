@@ -39,6 +39,14 @@ class TestMovieList:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 0
 
+    def test_list_movies_by_source(self, api_client, movie, movie_tmdb):
+        url = reverse("movie-list")
+        response = api_client.get(url, {"source": "tmdb"})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 1
+        assert response.data[0]["title"] == "TMDB Movie"
+
 
 class TestMovieRetrieve:
     """Tests for retrieving movie"""

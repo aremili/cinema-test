@@ -25,6 +25,14 @@ class TestAuthorList:
         assert len(author_data["movies"]) == 1
         assert author_data["movies"][0]["title"] == "Test Movie"
 
+    def test_list_authors_by_source(self, api_client, author, author_tmdb):
+        url = reverse("author-list")
+        response = api_client.get(url, {"source": "tmdb"})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 1
+        assert response.data[0]["id"] == author_tmdb.pk
+
 
 class TestAuthorRetrieve:
     """Tests for retrieving author"""

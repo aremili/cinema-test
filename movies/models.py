@@ -4,6 +4,13 @@ from django.db import models
 from users.models import BaseUser
 
 
+class Source(models.TextChoices):
+    """Source of the record"""
+
+    ADMIN = "admin", "Admin"
+    TMDB = "tmdb", "TMDB"
+
+
 class Author(BaseUser):
     """Movie authors"""
 
@@ -11,6 +18,12 @@ class Author(BaseUser):
     website = models.URLField(blank=True, default="")
     birthdate = models.DateField(blank=True, null=True)
     nationality = models.CharField(max_length=100, blank=True, default="")
+    source = models.CharField(
+        max_length=10,
+        choices=Source.choices,
+        default=Source.ADMIN,
+    )
+    tmdb_id = models.IntegerField(null=True, blank=True, unique=True)
 
     class Meta:
         verbose_name = "Author"
@@ -79,6 +92,12 @@ class Movie(models.Model):
     popularity = models.FloatField(blank=True, null=True)
     vote_average = models.FloatField(blank=True, null=True)
     vote_count = models.PositiveIntegerField(blank=True, null=True)
+    source = models.CharField(
+        max_length=10,
+        choices=Source.choices,
+        default=Source.ADMIN,
+    )
+    tmdb_id = models.IntegerField(null=True, blank=True, unique=True)
 
     authors = models.ManyToManyField(Author, related_name="movies", blank=True)
 

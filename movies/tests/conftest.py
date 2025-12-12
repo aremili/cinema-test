@@ -82,3 +82,27 @@ def spectator(db):
         password="testpass123",
     )
 
+
+@pytest.fixture
+def movie_tmdb(db):
+    """Movie from TMDB"""
+    return Movie.objects.create(
+        title="TMDB Movie",
+        overview="A movie from TMDB",
+        status="released",
+        source="tmdb",
+        tmdb_id=12345,
+    )
+
+
+@pytest.fixture
+def author_tmdb(db):
+    """Author from TMDB"""
+    return Author.objects.create_user(
+        username="tmdb_author",
+        email="tmdb@test.com",
+        password="testpass123",
+        source="tmdb",
+        tmdb_id=67890,
+    )
+
