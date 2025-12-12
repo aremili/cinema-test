@@ -11,3 +11,9 @@ wheels/
 
 # Environment files
 .env
+
+# schemathesis
+.hypothesis
+
+# Static files
+staticfiles/
