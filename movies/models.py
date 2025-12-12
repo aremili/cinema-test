@@ -1,34 +1,12 @@
-from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-
-class User(AbstractUser):
-    """Base user model for authentication."""
-
-    class UserType(models.TextChoices):
-        AUTHOR = "author", "Author"
-        SPECTATOR = "spectator", "Spectator"
-
-    user_type = models.CharField(
-        max_length=20,
-        choices=UserType.choices,
-        default=UserType.SPECTATOR,
-    )
-
-    class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
+from users.models import BaseUser
 
 
-class Author(models.Model):
+class Author(BaseUser):
     """Movie authors"""
 
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name="author_profile",
-    )
     biography = models.TextField(blank=True, default="")
     website = models.URLField(blank=True, default="")
     birthdate = models.DateField(blank=True, null=True)
@@ -39,17 +17,12 @@ class Author(models.Model):
         verbose_name_plural = "Authors"
 
     def __str__(self):
-        return self.user.get_full_name() or self.user.username
+        return self.get_full_name() or self.username
 
 
-class Spectator(models.Model):
+class Spectator(BaseUser):
     """Movie spectators"""
 
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name="spectator_profile",
-    )
     bio = models.TextField(blank=True, default="")
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
@@ -59,7 +32,7 @@ class Spectator(models.Model):
         verbose_name_plural = "Spectators"
 
     def __str__(self):
-        return self.user.username
+        return self.get_full_name() or self.username
 
 
 class Movie(models.Model):
@@ -73,6 +46,12 @@ class Movie(models.Model):
         RELEASED = "released", "Released"
         CANCELED = "canceled", "Canceled"
 
+    class Evaluation(models.TextChoices):
+        MASTERPIECE = "masterpiece", "Masterpiece"
+        GOOD = "good", "Good"
+        AVERAGE = "average", "Average"
+        TERRIBLE = "terrible", "Terrible"
+
     title = models.CharField(max_length=255)
     overview = models.TextField(blank=True, default="")
     tagline = models.CharField(max_length=500, blank=True, default="")
@@ -81,6 +60,12 @@ class Movie(models.Model):
         max_length=20,
         choices=Status.choices,
         default=Status.RELEASED,
+    )
+    evaluation = models.CharField(
+        max_length=20,
+        choices=Evaluation.choices,
+        blank=True,
+        default="",
     )
     budget = models.PositiveBigIntegerField(blank=True, null=True)
     revenue = models.PositiveBigIntegerField(blank=True, null=True)
@@ -122,7 +107,7 @@ class MovieRating(models.Model):
         help_text="Rating from 1 to 10",
     )
     review = models.TextField(blank=True, default="")
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

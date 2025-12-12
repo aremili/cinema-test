@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     "rest_framework",
 
     # Local apps
+    "users",
     "movies",
 ]
 
 # Custom user model
-AUTH_USER_MODEL = "movies.User"
+AUTH_USER_MODEL = "users.BaseUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -127,3 +128,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+# Development tools
+if DEBUG:
+    INSTALLED_APPS += [
+        "django_extensions",
+        "debug_toolbar",
+    ]
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+    INTERNAL_IPS = ["127.0.0.1"]
