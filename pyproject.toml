@@ -18,3 +18,9 @@ dev = [
     "django-extensions>=3.2",
     "django-debug-toolbar>=4.4",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-django>=4.11.1",
+]
