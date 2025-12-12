@@ -26,6 +26,11 @@ class Spectator(BaseUser):
     bio = models.TextField(blank=True, default="")
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    favorite_movies = models.ManyToManyField(
+        "Movie",
+        related_name="favorited_by",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Spectator"

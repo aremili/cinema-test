@@ -86,6 +86,15 @@ class AuthorAdmin(UserAdmin):
         return obj.movies.count()
 
 
+class FavoriteMoviesInline(admin.TabularInline):
+    """Favorite movies of a spectator"""
+
+    model = Spectator.favorite_movies.through
+    extra = 0
+    verbose_name = "Favorite Movie"
+    verbose_name_plural = "Favorite Movies"
+
+
 @admin.register(Spectator)
 class SpectatorAdmin(UserAdmin):
     """Admin for Spectator model"""
@@ -93,7 +102,7 @@ class SpectatorAdmin(UserAdmin):
     list_display = ["username", "email", "date_of_birth", "has_avatar"]
     list_filter = ["date_of_birth", "is_active"]
     search_fields = ["username", "email", "bio"]
-    inlines = [MovieRatingInline, AuthorRatingInline]
+    inlines = [FavoriteMoviesInline, MovieRatingInline, AuthorRatingInline]
 
     fieldsets = UserAdmin.fieldsets + (
         ("Spectator Profile", {"fields": ["bio", "avatar", "date_of_birth"]}),
