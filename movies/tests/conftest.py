@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.test import APIClient
 
-from movies.models import Author, Movie
+from movies.models import Author, Movie, Spectator
 
 
 @pytest.fixture
@@ -58,3 +58,13 @@ def movie_with_author(db, author):
     )
     movie.authors.add(author)
     return movie
+
+
+@pytest.fixture
+def spectator(db):
+    """Test spectator for rating movies."""
+    return Spectator.objects.create_user(
+        username="test_spectator",
+        email="spectator@test.com",
+        password="testpass123",
+    )

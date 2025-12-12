@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from movies.models import Movie
+from movies.models import Movie, MovieRating
 
 
 class TestMovieList:
@@ -87,3 +87,41 @@ class TestMovieUpdate:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["title"] == "New Title"
         assert response.data["status"] == "post_production"
+
+
+class TestMovieRating:
+
+    def test_create_movie_rating(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
+        url = reverse("movie-rate", kwargs={"pk": movie.pk})
+        response = api_client.post(
+            url,
+            {"score": 8, "review": "Great movie!"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["score"] == 8
+        assert response.data["review"] == "Great movie!"
+        assert MovieRating.objects.filter(spectator=spectator, movie=movie).exists()
+
+    def test_update_movie_rating(self, api_client, movie, spectator):
+        api_client.force_authenticate(user=spectator)
+        url = reverse("movie-rate", kwargs={"pk": movie.pk})
+
+        api_client.post(
+            url,
+            {"score": 7, "review": "Good movie"},
+            format="json",
+        )
+
+        response = api_client.post(
+            url,
+            {"score": 9, "review": "Even better when rewatch!"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["score"] == 9
+        assert response.data["review"] == "Even better when rewatch!"
+        assert MovieRating.objects.filter(spectator=spectator, movie=movie).count() == 1
