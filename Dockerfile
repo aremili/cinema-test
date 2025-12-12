@@ -5,9 +5,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-WORKDIR /app
+RUN useradd -m -u 1000 appuser
 
-COPY pyproject.toml uv.lock ./
+WORKDIR /app
+RUN chown appuser:appuser /app
+
+# Copy deps with user
+COPY --chown=appuser:appuser pyproject.toml uv.lock ./
+USER appuser
 RUN uv sync --frozen
 
 EXPOSE 8000

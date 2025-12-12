@@ -12,10 +12,7 @@ class Source(models.TextChoices):
 
 
 class Author(BaseUser):
-    """Movie authors"""
-
     biography = models.TextField(blank=True, default="")
-    website = models.URLField(blank=True, default="")
     birthdate = models.DateField(blank=True, null=True)
     nationality = models.CharField(max_length=100, blank=True, default="")
     source = models.CharField(
@@ -35,8 +32,6 @@ class Author(BaseUser):
 
 
 class Spectator(BaseUser):
-    """Movie spectators"""
-
     bio = models.TextField(blank=True, default="")
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
@@ -55,8 +50,6 @@ class Spectator(BaseUser):
 
 
 class Movie(models.Model):
-    """Movie model"""
-
     class Status(models.TextChoices):
         RUMORED = "rumored", "Rumored"
         PLANNED = "planned", "Planned"

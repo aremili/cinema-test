@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class BaseUser(AbstractUser):
-    """Base user model. Admins use this directly (is_superuser=True)."""
+    """Custom user model"""
 
     class Meta:
         verbose_name = "User"

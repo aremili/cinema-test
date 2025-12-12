@@ -34,7 +34,7 @@ createsuperuser:
 
 # Run tests
 test *args:
-    docker compose exec api uv run pytest {{args}}
+    docker compose exec api uv run pytest -vv {{args}}
 
 # Run schemathesis
 schemathesis:

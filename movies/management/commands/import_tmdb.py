@@ -1,4 +1,3 @@
-import random
 import string
 from datetime import datetime
 
@@ -93,6 +92,15 @@ class Command(BaseCommand):
         )
 
     def _create_movie(self, data):
+        """
+        Create movie from TMDB data
+
+        Args:
+            data (dict): TMDB movie data
+
+        Returns:
+            Movie: movie instance
+        """
         release_date = None
         if data.get("release_date"):
             try:
@@ -116,6 +124,16 @@ class Command(BaseCommand):
         )
 
     def _fetch_directors(self, client, movie_id):
+        """
+        Fetch directors from TMDB
+
+        Args:
+            client (httpx.Client): HTTP client
+            movie_id (int): TMDB movie ID
+
+        Returns:
+            list: of director data
+        """
         response = client.get(
             f"{self.TMDB_BASE_URL}/movie/{movie_id}/credits",
             params={"api_key": self.api_key},
@@ -129,6 +147,16 @@ class Command(BaseCommand):
         return directors
 
     def _get_or_create_author(self, client, director_data):
+        """
+        Get or create author/director from TMDB
+
+        Args:
+            client (httpx.Client): HTTP client
+            director_data (dict): TMDB director data
+
+        Returns:
+            Tuple: author instance, created flag
+        """
         tmdb_id = director_data["id"]
 
         # check if author already exist
@@ -152,7 +180,7 @@ class Command(BaseCommand):
 
         # Create author
         name = person.get("name", "Unknown")
-        username = self._generate_username(name)
+        username = self._generate_username(name, tmdb_id)
 
         author = Author.objects.create(
             tmdb_id=tmdb_id,
@@ -165,10 +193,7 @@ class Command(BaseCommand):
         )
         return author, True
 
-    def _generate_username(self, name):
-        """Generate username"""
+    def _generate_username(self, name, tmdb_id):
+        """Generate unique username"""
         base = name.lower().replace(" ", "_").replace("-", "_")
-        random_suffix = "".join(
-            random.choices(string.ascii_lowercase + string.digits, k=5)
-        )
-        return f"{base}_{random_suffix}"
+        return f"{base}_{tmdb_id}"

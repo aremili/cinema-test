@@ -5,7 +5,7 @@ from movies.models import Spectator
 
 
 class SpectatorRegistrationSerializer(serializers.ModelSerializer):
-    """Serializer spectator registration"""
+    """Spectator registration serializer"""
 
     password = serializers.CharField(
         write_only=True,

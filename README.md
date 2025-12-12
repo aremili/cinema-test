@@ -14,13 +14,20 @@ Create a `.env` file from env.example:
 ```bash
 SECRET_KEY='your-secret-key'
 DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+POSTGRES_DB=cinema
+POSTGRES_USER=cinema
+POSTGRES_PASSWORD=cinema
 TMDB_API_KEY=your-tmdb-api-key
 ```
 
 ## To run the API
+(Without `just`, see the `justfile` for alternative docker commands)
 
 ```bash
 # Start containers
+just build 
+# or if already built
 just up
 
 # Run migrations
@@ -31,17 +38,21 @@ just createsuperuser
 
 # to import movies from TMDB (50 by default )
 just import-tmdb
+
+# to view logs
+just logs
 ```
+
+Admin access: http://localhost:8000/admin/
 
 ## Commands
 
 Run `just` to see all available commands:
-(Without `just`, see the `justfile` for alternative docker commands.)
 
 | Command | Description |
 |---------|-------------|
 | `just up` | Start containers |
-| `just build` | Rebuild and start |
+| `just build` | Rebuild and start containers |
 | `just down` | Stop containers |
 | `just logs` | View API logs |
 | `just migrate` | Run migrations |
@@ -56,7 +67,7 @@ Run `just` to see all available commands:
 
 ## Authentication 
 
-To use protected endpoints:
+To access protected endpoints:
 
 ```bash
 # 1. Register a new user
@@ -95,4 +106,3 @@ All write endpoints require authentication:
 
 - Swagger UI: http://localhost:8000/api/docs/
 - ReDoc: http://localhost:8000/api/redoc/
-- Admin: http://localhost:8000/admin/

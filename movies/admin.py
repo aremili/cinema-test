@@ -6,16 +6,12 @@ from .models import Author, AuthorRating, Movie, MovieRating, Spectator
 
 
 class MovieRatingInline(admin.TabularInline):
-    """Inline for movie ratings."""
-
     model = MovieRating
     extra = 0
     readonly_fields = ["created_at", "updated_at"]
 
 
 class AuthorRatingInline(admin.TabularInline):
-    """Inline for author ratings."""
-
     model = AuthorRating
     extra = 0
     readonly_fields = ["created_at", "updated_at"]
@@ -34,7 +30,7 @@ class AuthorMoviesInline(admin.TabularInline):
 
 
 class MovieAuthorsInline(admin.TabularInline):
-    """Inline to display authors linked to a movi"""
+    """Inline to display authors linked to a movie"""
 
     model = Movie.authors.through
     extra = 0
@@ -67,8 +63,6 @@ class HasMoviesFilter(SimpleListFilter):
 
 @admin.register(Author)
 class AuthorAdmin(UserAdmin):
-    """Admin for Author model"""
-
     list_display = [
         "username",
         "get_full_name",
@@ -85,13 +79,13 @@ class AuthorAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (
             "Author Profile",
-            {"fields": ["biography", "website", "birthdate", "nationality"]},
+            {"fields": ["biography", "birthdate", "nationality"]},
         ),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
             "Author Profile",
-            {"fields": ["biography", "website", "birthdate", "nationality"]},
+            {"fields": ["biography", "birthdate", "nationality"]},
         ),
     )
 
@@ -111,8 +105,6 @@ class FavoriteMoviesInline(admin.TabularInline):
 
 @admin.register(Spectator)
 class SpectatorAdmin(UserAdmin):
-    """Admin for Spectator model"""
-
     list_display = ["username", "email", "date_of_birth", "has_avatar"]
     list_filter = ["date_of_birth", "is_active"]
     search_fields = ["username", "email", "bio"]
@@ -132,8 +124,6 @@ class SpectatorAdmin(UserAdmin):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    """Admin for Movie model."""
-
     list_display = [
         "title",
         "release_date",
@@ -162,5 +152,5 @@ class MovieAdmin(admin.ModelAdmin):
 
     @admin.display(description="Authors")
     def get_authors(self, obj):
-        """overview of authors linked to the movie"""
+        """overview of authors linked to the movie (max 3)"""
         return ", ".join([str(author) for author in obj.authors.all()[:3]])

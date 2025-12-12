@@ -75,7 +75,6 @@ class TestAuthorUpdate:
             url,
             {
                 "biography": "Updated bio",
-                "website": "https://example.com",
                 "nationality": "Spanish",
             },
             format="json",
@@ -83,7 +82,6 @@ class TestAuthorUpdate:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["biography"] == "Updated bio"
-        assert response.data["website"] == "https://example.com"
 
 
 class TestAuthorDelete:
