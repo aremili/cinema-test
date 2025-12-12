@@ -7,6 +7,16 @@ Cinema API for managing movies, authors, and ratings.
 - Docker & Docker Compose
 - [just](https://github.com/casey/just) - to simplify commands
 
+## Environment Variables
+
+Create a `.env` file from env.example:
+
+```bash
+SECRET_KEY='your-secret-key'
+DEBUG=True
+TMDB_API_KEY=your-tmdb-api-key
+```
+
 ## To run the API
 
 ```bash
