@@ -1,4 +1,3 @@
-import pytest
 from django.urls import reverse
 from rest_framework import status
 
@@ -98,7 +97,9 @@ class TestAuthorDelete:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Author.objects.filter(pk=author.pk).exists()
 
-    def test_delete_author_with_movies_linked(self, api_client, author_with_movie, spectator):
+    def test_delete_author_with_movies_linked(
+        self, api_client, author_with_movie, spectator
+    ):
         api_client.force_authenticate(user=spectator)
         url = reverse("author-detail", kwargs={"pk": author_with_movie.pk})
         response = api_client.delete(url)
@@ -109,7 +110,6 @@ class TestAuthorDelete:
 
 
 class TestAuthorRating:
-
     def test_create_and_update_author_rating(self, api_client, author, spectator):
         api_client.force_authenticate(user=spectator)
         url = reverse("author-rate", kwargs={"pk": author.pk})
@@ -129,4 +129,6 @@ class TestAuthorRating:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["score"] == 10
         assert response.data["review"] == "a masterpiece maker!"
-        assert AuthorRating.objects.filter(spectator=spectator, author=author).count() == 1
+        assert (
+            AuthorRating.objects.filter(spectator=spectator, author=author).count() == 1
+        )

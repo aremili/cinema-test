@@ -1,8 +1,7 @@
-import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from movies.models import Movie, MovieRating
+from movies.models import MovieRating
 
 
 class TestMovieList:
@@ -67,7 +66,6 @@ class TestMovieRetrieve:
 
 
 class TestMovieUpdate:
-
     def test_partial_update_movie(self, api_client, movie, spectator):
         api_client.force_authenticate(user=spectator)
         url = reverse("movie-detail", kwargs={"pk": movie.pk})
@@ -100,7 +98,6 @@ class TestMovieUpdate:
 
 
 class TestMovieRating:
-
     def test_create_movie_rating(self, api_client, movie, spectator):
         api_client.force_authenticate(user=spectator)
         url = reverse("movie-rate", kwargs={"pk": movie.pk})

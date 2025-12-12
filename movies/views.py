@@ -18,6 +18,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     """
     API to manage authors.
     """
+
     http_method_names = ["get", "put", "patch", "delete", "post"]
 
     serializer_class = AuthorSerializer
@@ -77,6 +78,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     """
     API manage  movies.
     """
+
     http_method_names = ["get", "put", "patch", "post", "delete"]
     serializer_class = MovieSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]

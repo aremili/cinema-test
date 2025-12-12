@@ -1,11 +1,10 @@
 import random
 import string
+from datetime import datetime
 
 import httpx
-from datetime import datetime
-from django.conf import settings
-from django.core.management.base import BaseCommand
 from decouple import config
+from django.core.management.base import BaseCommand
 
 from movies.models import Author, Movie, Source
 
@@ -51,37 +50,55 @@ class Command(BaseCommand):
                     # skip if movie already exists
                     tmdb_id = movie_data["id"]
                     if Movie.objects.filter(tmdb_id=tmdb_id).exists():
-                        self.stdout.write(f"  -> Skipping movie: {movie_data['title']} (already exists)")
+                        self.stdout.write(
+                            f"  -> Skipping movie: {movie_data['title']} (already exists)"
+                        )
                         continue
 
                     # Create movie
                     movie = self._create_movie(movie_data)
                     movies_imported += 1
-                    self.stdout.write(self.style.SUCCESS(f"  -> Imported movie: {movie.title}"))
+                    self.stdout.write(
+                        self.style.SUCCESS(f"  -> Imported movie: {movie.title}")
+                    )
 
                     # Fetch and create directors
                     directors = self._fetch_directors(client, tmdb_id)
                     for director_data in directors:
-                        author, created = self._get_or_create_author(client, director_data)
+                        author, created = self._get_or_create_author(
+                            client, director_data
+                        )
                         movie.authors.add(author)
                         if created:
                             authors_imported += 1
-                            self.stdout.write(self.style.SUCCESS(f"  -> Imported director: {author.username}"))
+                            self.stdout.write(
+                                self.style.SUCCESS(
+                                    f"  -> Imported director: {author.username}"
+                                )
+                            )
 
                 page += 1
                 if page > data["total_pages"]:
-                    self.stdout.write(self.style.WARNING(f"\nNo more pages to import. Imported {movies_imported} movies and {authors_imported} new directors."))
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"\nNo more pages to import. Imported {movies_imported} movies and {authors_imported} new directors."
+                        )
+                    )
                     break
 
-        self.stdout.write(self.style.SUCCESS(
-            f"\nDone! Imported {movies_imported} movies and {authors_imported} new directors."
-        ))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"\nDone! Imported {movies_imported} movies and {authors_imported} new directors."
+            )
+        )
 
     def _create_movie(self, data):
         release_date = None
         if data.get("release_date"):
             try:
-                release_date = datetime.strptime(data["release_date"], "%Y-%m-%d").date()
+                release_date = datetime.strptime(
+                    data["release_date"], "%Y-%m-%d"
+                ).date()
             except ValueError:
                 pass
 
@@ -107,8 +124,7 @@ class Command(BaseCommand):
         data = response.json()
 
         directors = [
-            person for person in data.get("crew", [])
-            if person.get("job") == "Director"
+            person for person in data.get("crew", []) if person.get("job") == "Director"
         ]
         return directors
 
@@ -152,5 +168,7 @@ class Command(BaseCommand):
     def _generate_username(self, name):
         """Generate username"""
         base = name.lower().replace(" ", "_").replace("-", "_")
-        random_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=5))
+        random_suffix = "".join(
+            random.choices(string.ascii_lowercase + string.digits, k=5)
+        )
         return f"{base}_{random_suffix}"

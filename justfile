@@ -50,7 +50,7 @@ import-tmdb count="50":
 
 # Lint and format
 lint:
-    uv run ruff check .
+    docker compose exec api uv run ruff check .
 
 format:
-    uv run ruff format .
+    docker compose exec api uv run ruff format .

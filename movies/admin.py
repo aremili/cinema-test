@@ -69,16 +69,30 @@ class HasMoviesFilter(SimpleListFilter):
 class AuthorAdmin(UserAdmin):
     """Admin for Author model"""
 
-    list_display = ["username", "get_full_name", "email", "nationality", "birthdate", "movie_count", "source"]
+    list_display = [
+        "username",
+        "get_full_name",
+        "email",
+        "nationality",
+        "birthdate",
+        "movie_count",
+        "source",
+    ]
     list_filter = [HasMoviesFilter]
     search_fields = ["username", "first_name", "last_name", "email", "biography"]
     inlines = [AuthorMoviesInline, AuthorRatingInline]
 
     fieldsets = UserAdmin.fieldsets + (
-        ("Author Profile", {"fields": ["biography", "website", "birthdate", "nationality"]}),
+        (
+            "Author Profile",
+            {"fields": ["biography", "website", "birthdate", "nationality"]},
+        ),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Author Profile", {"fields": ["biography", "website", "birthdate", "nationality"]}),
+        (
+            "Author Profile",
+            {"fields": ["biography", "website", "birthdate", "nationality"]},
+        ),
     )
 
     @admin.display(description="Movies")
@@ -120,7 +134,16 @@ class SpectatorAdmin(UserAdmin):
 class MovieAdmin(admin.ModelAdmin):
     """Admin for Movie model."""
 
-    list_display = ["title", "release_date", "status", "evaluation", "vote_average", "popularity", "get_authors", "source"]
+    list_display = [
+        "title",
+        "release_date",
+        "status",
+        "evaluation",
+        "vote_average",
+        "popularity",
+        "get_authors",
+        "source",
+    ]
     list_filter = ["status", "evaluation"]
     search_fields = ["title", "overview", "tagline"]
     filter_horizontal = ["authors"]

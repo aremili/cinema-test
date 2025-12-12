@@ -9,6 +9,7 @@ class SpectatorRegistrationView(generics.CreateAPIView):
     """
     Endpoint for spectator registration
     """
+
     serializer_class = SpectatorRegistrationSerializer
     permission_classes = [AllowAny]
 

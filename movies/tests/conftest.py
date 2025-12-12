@@ -105,4 +105,3 @@ def author_tmdb(db):
         source="tmdb",
         tmdb_id=67890,
     )
-
