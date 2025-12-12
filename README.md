@@ -28,6 +28,9 @@ just migrate
 
 # Create admin user
 just createsuperuser
+
+# to import movies from TMDB (50 by default )
+just import-tmdb
 ```
 
 ## Commands
